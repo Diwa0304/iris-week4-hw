@@ -32,7 +32,13 @@ jobs:
 
     - name: Set up DVC
       uses: iterative/setup-dvc@v2
-
+    - name: Authenticate with GCP
+      env:
+        GCP_B64: ${{ secrets.GCP_CREDENTIALS_B64 }}
+      run: |
+        echo "$GCP_B64" | base64 -d > gcp-key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-key.json
+        
     - name: Pull data and model from DVC
       run: |
         dvc pull
@@ -44,7 +50,6 @@ jobs:
     - name: Create CML report
       env:
         REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GCP_B64: ${{ secrets.GCP_CREDENTIALS_B64 }}
       run: |
         echo "## Test Output" > report.md
         cat test_output.txt >> report.md
