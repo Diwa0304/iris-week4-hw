@@ -44,6 +44,7 @@ jobs:
     - name: Create CML report
       env:
         REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GCP_B64: ${{ secrets.GCP_CREDENTIALS_B64 }}
       run: |
         echo "## Test Output" > report.md
         cat test_output.txt >> report.md
