@@ -41,6 +41,9 @@ jobs:
         export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-key.json
         dvc pull
 
+    - name: Run train.py
+      run: python train.py
+
     - name: Run unit tests
       run: |
         pytest tests/ > test_output.txt
