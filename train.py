@@ -5,6 +5,8 @@ from sklearn.preprocessing import OrdinalEncoder
 import joblib
 import os
 import pandas as pd
+import csv
+from datetime import datetime
 
 df = pd.read_csv("data/iris_1.csv")
 
@@ -27,4 +29,13 @@ joblib.dump(model, "models/iris_classifier.joblib")
 joblib.dump(encoder, "models/encoder.joblib")
 X_test.to_csv("data/X_test.csv", index=False)
 y_test.to_csv("data/y_test.csv", index=False)
+
+
+
+
+with open("metrics.csv", "a", newline="") as f:
+	writer = csv.writer(f)
+	writer.writerow(["run", "metric", "value"]) if f.tell() == 0 else None
+	writer.writerow([datetime.now().isoformat(), "accuracy", accuracy_score(y_test, y_pred)])
+
 
