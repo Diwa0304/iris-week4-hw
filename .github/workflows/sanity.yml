@@ -1,0 +1,59 @@
+name: sanity_test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test_model:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
+    - name: Install CML
+      uses: iterative/setup-cml@v2
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Set up DVC
+      uses: iterative/setup-dvc@v2
+      
+    - name: Authenticate and pull from DVC
+      env:
+        GCP_B64: ${{ secrets.GCP_CREDENTIALS_B64 }}
+      run: |
+        echo "$GCP_B64" | base64 -d > gcp-key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-key.json
+        dvc pull
+
+    - name: Run train.py
+      run: python train.py
+
+    - name: Run unit tests
+      run: |
+        pytest tests/ > test_output.txt
+
+    - name: Create CML report
+      env:
+        REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "## Test Output" > report.md
+        cat test_output.txt >> report.md
+        echo "\n## Metrics from Training" >> report.md
+        cat metrics.csv >> report.md
+        cml comment create report.md
