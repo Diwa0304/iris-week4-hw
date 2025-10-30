@@ -40,7 +40,7 @@ joblib.dump(encoder, "models/encoder.joblib")
 X_test.to_csv("data/X_test.csv", index=False)
 y_test.to_csv("data/y_test.csv", index=False)
 
-METRICS_FILE = "metrics.csv":
+METRICS_FILE = "metrics.csv"
 run_timestamp = datetime.now().isoformat()
 
 try:
