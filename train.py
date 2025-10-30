@@ -53,7 +53,7 @@ try:
             writer.writerow(["timestamp", "metric", "value"])
             
         # Write the new metric line
-        writer.writerow([run_timestamp, "accuracy", accuracy_value])
+        writer.writerow([run_timestamp, "accuracy", accuracy_metric])
 
     print(f"Metrics logged to {METRICS_FILE}")
 
