@@ -48,6 +48,8 @@ jobs:
       run: python train.py
 
     - name: Run unit tests
+      env:
+        DATA_FILE_CI : iris_2.csv
       run: |
         pytest tests/ > test_output.txt
 
