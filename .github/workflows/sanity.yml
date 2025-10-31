@@ -41,11 +41,30 @@ jobs:
         echo "$GCP_B64" | base64 -d > gcp-key.json
         export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-key.json
         dvc pull data/${{env.DATA_FILE}}
-
+        
+    - name: Debug MLflow Connection
+      env:
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      run: |
+        echo "Attempting to reach MLflow server at: $MLFLOW_TRACKING_URI"
+        curl -v -L --max-time 15 "${{ secrets.MLFLOW_TRACKING_URI }}"
+        echo "If the above output shows a connection error (timeout/refused), check your MLflow server's firewall rules."
+        
     - name: Run train.py
       env:
         DATA_FILE: iris_2.csv 
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
       run: python train.py
+      
+    - name: Run Model Registry Sanity Check
+      env:
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
+        # Add required MLflow credentials if your server needs auth
+        # MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_USERNAME }}
+        # MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_PASSWORD }}
+        
+      run: |
+         python CI_sanity_check.py > sanity_check_output.txt
 
     - name: Run unit tests
       env:
@@ -57,6 +76,8 @@ jobs:
       env:
         REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        echo "## Model Registry Sanity Check" > report.md
+        cat sanity_check_output.txt >> report.md
         echo "## Test Output" > report.md
         cat test_output.txt >> report.md
         echo "\n## Metrics from Training" >> report.md
