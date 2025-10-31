@@ -64,7 +64,7 @@ jobs:
         # MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_PASSWORD }}
         
       run: |
-         python ci_sanity_check.py > sanity_check_output.txt
+         python CI_sanity_check.py > sanity_check_output.txt
 
     - name: Run unit tests
       env:
