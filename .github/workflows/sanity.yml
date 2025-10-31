@@ -46,6 +46,15 @@ jobs:
       env:
         DATA_FILE: iris_2.csv 
       run: python train.py
+    - name: Run Model Registry Sanity Check
+      env:
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
+        # Add required MLflow credentials if your server needs auth
+        # MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_USERNAME }}
+        # MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_PASSWORD }}
+        
+      run: |
+         python ci_sanity_check.py > sanity_check_output.txt
 
     - name: Run unit tests
       env:
@@ -57,6 +66,8 @@ jobs:
       env:
         REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+	echo "## Model Registry Sanity Check" > report.md
+	cat sanity_check_output.txt >> report.md
         echo "## Test Output" > report.md
         cat test_output.txt >> report.md
         echo "\n## Metrics from Training" >> report.md
