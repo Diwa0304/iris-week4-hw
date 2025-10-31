@@ -14,5 +14,8 @@ train.py - contains the code used for training the data- a simple logistic regre
 
 tests - the folder contains the test (3 in this case) that were run as a part of the process
 
-.github/workflows/sanity.yml - .github/workflows is the default location to create action files. sanity.yml contains the actions and steps taken in the action and cases that triggers the actions
+.github/workflows/sanity.yml - .github/workflows is the default location to create action files. sanity.yml contains the actions and steps taken in the action and cases that triggers the actions. The actions are now integrated with the MLFlow for model tracking.
 
+The week 5 content are entirely done in dev-week5 branch and it has been merged to main.
+
+There are code to get the best model and latest model in the MLFlow artifacts directory.
