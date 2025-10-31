@@ -66,8 +66,8 @@ jobs:
       env:
         REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-	echo "## Model Registry Sanity Check" > report.md
-	cat sanity_check_output.txt >> report.md
+		echo "## Model Registry Sanity Check" > report.md
+		cat sanity_check_output.txt >> report.md
         echo "## Test Output" > report.md
         cat test_output.txt >> report.md
         echo "\n## Metrics from Training" >> report.md
