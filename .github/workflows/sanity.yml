@@ -41,12 +41,21 @@ jobs:
         echo "$GCP_B64" | base64 -d > gcp-key.json
         export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-key.json
         dvc pull data/${{env.DATA_FILE}}
-
+        
+    - name: Debug MLflow Connection
+      env:
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      run: |
+        echo "Attempting to reach MLflow server at: $MLFLOW_TRACKING_URI"
+        curl -v -L --max-time 15 "${{ secrets.MLFLOW_TRACKING_URI }}"
+        echo "If the above output shows a connection error (timeout/refused), check your MLflow server's firewall rules."
+        
     - name: Run train.py
       env:
         DATA_FILE: iris_2.csv 
         MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
       run: python train.py
+      
     - name: Run Model Registry Sanity Check
       env:
         MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
