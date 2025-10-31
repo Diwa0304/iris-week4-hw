@@ -26,7 +26,12 @@ except FileNotFoundError:
 
 # set up the mlflow server to dedicated ip address
 print("connecting mlflow")
-setup_mlflow(experiment_name="logistic_regression",host_address = "http://127.0.0.1:8100")
+MLFLOW_URI = os.environ.get("MLFLOW_TRACKING_URI")
+if not MLFLOW_URI:
+    # Fallback for local testing outside of CI, or just raise an error
+    print("ERROR: MLFLOW_TRACKING_URI environment variable is not set.")
+    exit(1)
+setup_mlflow(experiment_name="logistic_regression",host_address = MLFLOW_URI)
 
 encoder = OrdinalEncoder()
 df["target"] = encoder.fit_transform(df[["species"]]).astype(int) 
