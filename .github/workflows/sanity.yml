@@ -45,6 +45,7 @@ jobs:
     - name: Run train.py
       env:
         DATA_FILE: iris_2.csv 
+        MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
       run: python train.py
     - name: Run Model Registry Sanity Check
       env:
